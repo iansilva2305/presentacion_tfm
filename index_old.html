@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TFM - Anonimización de Datos y GDPR</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 40px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: slideIn 0.8s ease-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide h1 {
+            font-size: 3.5em;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .slide h2 {
+            font-size: 2.8em;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #2c3e50;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .slide h3 {
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            color: #34495e;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        .slide p, .slide li {
+            font-size: 1.4em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .slide ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .slide li {
+            padding: 15px 0;
+            border-left: 4px solid #3498db;
+            padding-left: 25px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            margin: 0 5px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(52, 73, 94, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .chart-container {
+            width: 100%;
+            max-width: 800px;
+            height: 400px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: end;
+            height: 300px;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, #3498db, #2980b9);
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            animation: growBar 1.5s ease-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: end;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            padding: 10px 0;
+        }
+
+        @keyframes growBar {
+            from { height: 0; }
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -30px;
+            font-size: 0.9em;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .crisp-phases {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin: 20px 0;
+        }
+
+        .phase-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .phase-descriptions {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 15px;
+            gap: 20px;
+        }
+
+        .phase-desc {
+            background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            text-align: center;
+            color: #2c3e50;
+            flex: 1;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-weight: 500;
+            max-width: 200px;
+        }
+
+        .methodology-flow {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .flow-step {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 25px;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .flow-arrow {
+            font-size: 2em;
+            color: #3498db;
+            margin: 0 20px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 100%;
+            margin: 30px 0;
+        }
+
+        .result-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .result-number {
+            font-size: 3em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .privacy-techniques {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            width: 100%;
+            margin: 25px 0;
+        }
+
+        .technique-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .conclusion-highlight {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .team-info {
+            text-align: center;
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+            border-radius: 15px;
+        }
+
+        .ranking-podium {
+            display: flex;
+            justify-content: center;
+            align-items: end;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .podium-step {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+            font-weight: bold;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-width: 180px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .podium-step h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .podium-step p {
+            margin: 5px 0;
+            font-size: 1em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .first-place {
+            height: 140px;
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+        }
+
+        .second-place {
+            height: 110px;
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        }
+
+        .third-place {
+            height: 90px;
+            background: linear-gradient(135deg, #e67e22, #d35400);
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="logo-container">UNIE Universidad</div>
+        
+        <!-- Slide 1: Título -->
+        <div class="slide active">
+            <h1>Anonimización de Datos Personales y Cumplimiento del GDPR</h1>
+            <h2>en Modelos de Lenguaje de Gran Escala (LLMs)</h2>
+            <div class="team-info">
+                <p><strong>Autores:</strong></p>
+                <p>Ing. Armando Rubén Ita Silva</p>
+                <p>Ing. Daniel Alexis Mendoza Corne</p>
+                <p>Ing. David Alexander González Vásquez</p>
+                <br>
+                <p><strong>Tutor:</strong> Prof. D. Desirée Delgado Linares</p>
+                <p><strong>Madrid, 2025</strong></p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Contexto y Motivación -->
+        <div class="slide">
+            <h2>Contexto y Motivación</h2>
+            <ul>
+                <li><strong>Era de Big Data:</strong> Generación masiva de datos financieros cada segundo</li>
+                <li><strong>LLMs en Finanzas:</strong> GPT-3, BERT, LLaMA revolucionan el análisis de datos</li>
+                <li><strong>Riesgo de Privacidad:</strong> Memorización de información personal durante entrenamiento</li>
+                <li><strong>GDPR:</strong> Necesidad urgente de cumplimiento normativo en IA</li>
+                <li><strong>Gap Académico-Práctico:</strong> Falta de implementaciones prácticas demostradas</li>
+            </ul>
+            <div class="conclusion-highlight">
+                ¿Cómo equilibrar la utilidad de los LLMs con la protección de datos personales?
+            </div>
+        </div>
+
+        <!-- Slide 3: Objetivos -->
+        <div class="slide">
+            <h2>Objetivos del Trabajo</h2>
+            <div class="privacy-techniques">
+                <div class="technique-card">
+                    <h3>Objetivo General</h3>
+                    <p>Desarrollar y validar un marco integral de evaluación para analizar el cumplimiento del GDPR en LLMs aplicados a escenarios financieros</p>
+                </div>
+                <div class="technique-card">
+                    <h3>Objetivos Específicos</h3>
+                    <ul style="font-size: 1.1em;">
+                        <li>Implementar técnicas avanzadas de anonimización</li>
+                        <li>Evaluar impacto en utilidad predictiva</li>
+                        <li>Diseñar dashboard de cumplimiento GDPR</li>
+                        <li>Formular recomendaciones prácticas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Metodología CRISP-DM -->
+        <div class="slide">
+            <h2>Metodología: CRISP-DM Adaptada</h2>
+            <div style="text-align: center; margin-bottom: 20px; font-size: 1.1em; color: #2c3e50; max-width: 900px;">
+                <p><strong>Enfoque estructurado</strong> que integra aspectos técnicos y legales del cumplimiento GDPR, 
+                permitiendo una implementación ordenada y auditable de técnicas de anonimización en sistemas de IA aplicados al sector financiero.</p>
+            </div>
+            
+            <div class="crisp-phases">
+                <div class="phase-group">
+                    <div class="methodology-flow">
+                        <div class="flow-step" title="Evaluar cumplimiento GDPR en LLMs financieros">1. Comprensión del Negocio</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step" title="Exploración PaySim1 y detección de atributos sensibles">2. Comprensión de Datos</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step" title="Seudonimización y transformación para anonimización">3. Preparación</div>
+                    </div>
+                    <div class="phase-descriptions">
+                        <div class="phase-desc">Evaluar cumplimiento GDPR en LLMs sobre datos financieros</div>
+                        <div class="phase-desc">Exploración PaySim1 y detección de atributos sensibles</div>
+                        <div class="phase-desc">Seudonimización y transformación para anonimización</div>
+                    </div>
+                </div>
+                
+                <div class="phase-group">
+                    <div class="methodology-flow">
+                        <div class="flow-step" title="Dashboard de auditoría GDPR para visualización">6. Despliegue</div>
+                        <div class="flow-arrow">←</div>
+                        <div class="flow-step" title="Comparación de rendimiento y análisis legal de riesgos">5. Evaluación</div>
+                        <div class="flow-arrow">←</div>
+                        <div class="flow-step" title="Random Forest, XGBoost, Regresión Logística con DP">4. Modelado</div>
+                    </div>
+                    <div class="phase-descriptions">
+                        <div class="phase-desc">Dashboard de auditoría GDPR para visualización</div>
+                        <div class="phase-desc">Comparación de rendimiento y análisis legal de riesgos</div>
+                        <div class="phase-desc">Random Forest, XGBoost, Regresión Logística con DP</div>
+                    </div>
+                </div>
+            </div>
+            
+            <p style="text-align: center; margin-top: 20px; font-size: 1.2em;">
+                <span class="highlight">Dataset:</span> PaySim1 - 6.3M transacciones financieras simuladas
+            </p>
+        </div>
+
+        <!-- Slide 5: Técnicas de Anonimización -->
+        <div class="slide">
+            <h2>Framework de Anonimización Implementado</h2>
+            <div class="privacy-techniques">
+                <div class="technique-card">
+                    <h3>🔐 Seudonimización (SHA-256)</h3>
+                    <p>Eliminación irreversible de identificadores directos (nameOrig, nameDest)</p>
+                </div>
+                <div class="technique-card">
+                    <h3>👥 K-anonimato (k=10)</h3>
+                    <p>Cada registro indistinguible de al menos 9 más en cuasi-identificadores</p>
+                </div>
+                <div class="technique-card">
+                    <h3>🎯 L-diversidad (l=2)</h3>
+                    <p>Diversidad en atributos sensibles dentro de grupos k-anónimos</p>
+                </div>
+                <div class="technique-card">
+                    <h3>📊 Privacidad Diferencial (ε=2.0)</h3>
+                    <p>Ruido matemático controlado para prevenir memorización del modelo</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Modelos Evaluados -->
+        <div class="slide">
+            <h2>Algoritmos de Machine Learning Evaluados</h2>
+            <div class="results-grid">
+                <div class="result-card">
+                    <h3>🌳 Random Forest</h3>
+                    <p>Método ensemble con múltiples árboles de decisión</p>
+                    <p><strong>Parámetros:</strong> 100 estimadores, profundidad máxima 10</p>
+                </div>
+                <div class="result-card">
+                    <h3>🚀 XGBoost</h3>
+                    <p>Gradient boosting optimizado con regularización</p>
+                    <p><strong>Parámetros:</strong> Learning rate 0.1, 100 iteraciones</p>
+                </div>
+                <div class="result-card">
+                    <h3>📈 Regresión Logística</h3>
+                    <p>Modelo lineal con regularización L2</p>
+                    <p><strong>Parámetros:</strong> C=1.0, normalización estándar</p>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 30px; font-size: 1.3em;">
+                <span class="highlight">Métricas:</span> Precisión, Sensibilidad, F1-Score, AUC-ROC
+            </p>
+        </div>
+
+        <!-- Slide 7: Resultados Principales -->
+        <div class="slide">
+            <h2>Resultados: Impacto de la Anonimización</h2>
+            <div class="chart-container">
+                <div class="bar-chart">
+                    <div class="bar" style="height: 85%;">
+                        <span>84.74%</span>
+                        <div class="bar-label">Random Forest</div>
+                    </div>
+                    <div class="bar" style="height: 66%;">
+                        <span>66.43%</span>
+                        <div class="bar-label">XGBoost</div>
+                    </div>
+                    <div class="bar" style="height: 55%;">
+                        <span>54.86%</span>
+                        <div class="bar-label">Regresión Logística</div>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 40px; font-size: 1.2em;">
+                    <strong>F1-Score post-anonimización</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 8: Ranking de Modelos -->
+        <div class="slide">
+            <h2>Ranking Final de Modelos</h2>
+            <div class="ranking-podium">
+                <div class="podium-step second-place">
+                    <h3>2º XGBoost</h3>
+                    <p>66.43%</p>
+                    <p>-19.90% degradación</p>
+                </div>
+                <div class="podium-step first-place">
+                    <h3>🥇 Random Forest</h3>
+                    <p>84.74%</p>
+                    <p>-2.02% degradación</p>
+                </div>
+                <div class="podium-step third-place">
+                    <h3>3º Reg. Logística</h3>
+                    <p>54.86%</p>
+                    <p>+2.40% mejora</p>
+                </div>
+            </div>
+            <div class="conclusion-highlight">
+                Random Forest demuestra excepcional robustez ante anonimización
+            </div>
+        </div>
+
+        <!-- Slide 9: Dashboard GDPR -->
+        <div class="slide">
+            <h2>Dashboard de Cumplimiento GDPR</h2>
+            <div class="privacy-techniques">
+                <div class="technique-card">
+                    <h3>📊 Indicadores en Tiempo Real</h3>
+                    <ul>
+                        <li>K-anonimato = 10 ✅</li>
+                        <li>L-diversidad = 2 ✅</li>
+                        <li>Épsilon = 2.0 ✅</li>
+                        <li>Riesgo Reidentificación: BAJO ✅</li>
+                    </ul>
+                </div>
+                <div class="technique-card">
+                    <h3>🔍 Funcionalidades</h3>
+                    <ul>
+                        <li>Monitorización continua</li>
+                        <li>Logs de auditoría</li>
+                        <li>Visualización trade-off privacidad-utilidad</li>
+                        <li>Interfaz ejecutiva</li>
+                    </ul>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 30px;">
+                <strong>Implementado en Streamlit para demostración práctica</strong>
+            </p>
+        </div>
+
+        <!-- Slide 10: Aportaciones -->
+        <div class="slide">
+            <h2>Principales Aportaciones</h2>
+            <ul>
+                <li><strong>Framework Completo:</strong> Metodología CRISP-DM adaptada para cumplimiento GDPR</li>
+                <li><strong>Implementación Práctica:</strong> Técnicas avanzadas de anonimización en datos financieros</li>
+                <li><strong>Evaluación Empírica:</strong> Cuantificación del trade-off privacidad-utilidad</li>
+                <li><strong>Herramienta de Auditoría:</strong> Dashboard interactivo para monitorización GDPR</li>
+                <li><strong>Evidencia Científica:</strong> Random Forest mantiene 97.7% del rendimiento original</li>
+                <li><strong>Replicabilidad:</strong> Código abierto en GitHub para la comunidad</li>
+            </ul>
+        </div>
+
+        <!-- Slide 11: Limitaciones -->
+        <div class="slide">
+            <h2>Limitaciones y Trabajo Futuro</h2>
+            <div class="privacy-techniques">
+                <div class="technique-card">
+                    <h3>⚠️ Limitaciones</h3>
+                    <ul>
+                        <li>Dataset sintético (PaySim1)</li>
+                        <li>Valor fijo ε = 2.0</li>
+                        <li>Implementación conceptual cifrado homomórfico</li>
+                        <li>Escalabilidad computacional DP</li>
+                    </ul>
+                </div>
+                <div class="technique-card">
+                    <h3>🚀 Líneas Futuras</h3>
+                    <ul>
+                        <li>Datos no estructurados en LLMs</li>
+                        <li>Cifrado homomórfico práctico</li>
+                        <li>Machine unlearning</li>
+                        <li>Evaluación multi-ε</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Conclusiones -->
+        <div class="slide">
+            <h2>Conclusiones</h2>
+            <div class="conclusion-highlight">
+                Es técnicamente factible implementar sistemas de IA conformes al GDPR sin comprometer significativamente la eficacia operacional
+            </div>
+            <ul>
+                <li><strong>Viabilidad Demostrada:</strong> Pérdida mínima de rendimiento (-2.02% F1-Score)</li>
+                <li><strong>Cumplimiento Legal:</strong> Framework conforme a principios GDPR</li>
+                <li><strong>Aplicabilidad Industrial:</strong> Solución práctica para sector financiero</li>
+                <li><strong>Contribución Académica:</strong> Puente entre teoría y práctica en privacidad IA</li>
+            </ul>
+            <p style="text-align: center; margin-top: 30px; font-size: 1.4em;">
+                <strong>La privacidad no es un obstáculo, sino un imperativo técnico y social</strong>
+            </p>
+        </div>
+
+        <!-- Slide 13: Gracias -->
+        <div class="slide">
+            <h1>¡Gracias por su atención!</h1>
+            <h2>¿Preguntas?</h2>
+            <div class="team-info">
+                <p><strong>Repositorios GitHub:</strong></p>
+                <p>🔗 Random Forest: github.com/iansilva2305/tfm_anonimizacion</p>
+                <p>🔗 XGBoost: github.com/gonzalezvdavid/TFM-XGBoost-Anonimization-GDPR</p>
+                <p>🔗 Regresión Logística: github.com/alexismendozac/TFM_Anonimizacion_RegresionLogistica</p>
+                <br>
+                <p><strong>Contacto:</strong></p>
+                <p>📧 Armando.ita.silva@gmail.com</p>
+                <p>📧 alxz0212@gmail.com</p>
+                <p>📧 dalexx07.28@gmail.com</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">⬅ Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente ➡</button>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">13</span>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight' || event.key === ' ') {
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+
+        // Auto-avance opcional (descomentado si se desea)
+        // setInterval(nextSlide, 30000); // Cambia cada 30 segundos
+    </script>
+</body>
+</html>

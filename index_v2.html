@@ -255,30 +255,6 @@
             color: #2c3e50;
         }
 
-        .header-logo {
-            position: absolute;
-            top: 1rem;
-            left: 1.5rem;
-            width: clamp(30px, 6vw, 60px);
-            height: auto;
-            z-index: 100;
-        }
-
-        .footer-university {
-            position: absolute;
-            bottom: 1rem;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: clamp(0.8rem, 1.5vw, 1rem);
-            color: #2c3e50;
-            font-weight: 500;
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
         .team-info {
             text-align: center;
             margin-top: 1.5rem;
@@ -534,9 +510,6 @@
                 font-size: 0.9rem;
                 min-width: 60px;
             }
-            .footer-university {
-                bottom: 4rem;
-            }
             .methodology-flow { flex-direction: column; }
             .flow-arrow { transform: rotate(90deg); }
             .comparison-chart { height: 200px; padding-bottom: 4rem; }
@@ -559,9 +532,6 @@
                 bottom: 0.5rem;
                 right: 0.5rem;
             }
-            .footer-university {
-                bottom: 3rem;
-            }
             .data-table { font-size: 0.7rem; }
             .data-table th, .data-table td { padding: 0.4rem; }
             .code-block { font-size: 0.6rem; padding: 0.5rem; }
@@ -572,23 +542,10 @@
     <div class="presentation-container">
         <div class="logo-container">UNIE Universidad</div>
         
-        <!-- Header logo para todas las slides excepto la primera -->
-        <img src="./images/unie-star.png" alt="UNIE Universidad" class="header-logo" id="headerLogo" style="display: none;">
-        
-        <!-- Footer para todas las slides excepto la primera -->
-        <div class="footer-university" id="footerUniversity" style="display: none;">
-            UNIE Universidad - Madrid, España
-        </div>
-        
         <!-- Slide 1: Título -->
         <div class="slide active">
             <h1>Anonimización de Datos Personales y Cumplimiento del GDPR en datos generados</h1>
-            <h1 style="border: none; text-align: center; margin-top: 1rem;">por Modelos de Lenguaje de Gran Escala (LLMs)</h1>
-			
-			<div style="text-align: center; margin: 2rem 0;">
-				<img src="./images/unie-logo.png" alt="UNIE Universidad" style="width: clamp(100px, 20vw, 200px); height: auto;">
-			</div>
-			
+            <h2 style="border: none; text-align: center; margin-top: 1rem;">por Modelos de Lenguaje de Gran Escala (LLMs)</h2>
             <div class="team-info">
                 <p><strong>Autores:</strong></p>
                 <p>Ing. Armando Rubén Ita Silva</p>
@@ -606,22 +563,22 @@
             <h2>Agenda de la Presentación</h2>
 
             <ul style="font-size: clamp(1rem, 2vw, 1.3rem); line-height: 1.8;">
-                <li>Problemática Central</strong></li>
-                <li>Dataset PaySim1 y Metodología CRISP-DM</li>
-                <li>Estructura del Proyecto y Arquitectura</li>
-                <li>Pipeline de Procesamiento según CRISP-DM</li>
-                <li>Framework de Anonimización: Implementación Técnica</li>
-                <li>Algoritmos ML: Conceptos y Justificación</li>
-				<li>Implementación y Pipeline de Evaluación</li>
-				<li>Resultados: Análisis Cuantitativo</li>
-				<li>Random Forest: El Modelo Ganador</li>
-				<li>Impacto Diferencial por Algoritmo</li>
-				<li>Dashboard de Cumplimiento GDPR</li>
-				<li>Principales Aportaciones</li>
-				<li>Limitaciones y Trabajo Futuro</li>
-				<li>Conclusiones</li>
-				<li>Recursos y Replicabilidad</li>
-				<li>Agradecimientos</li>
+                <li><strong>Problemática Central</strong></li>
+                <li><strong>Dataset PaySim1 y Metodología CRISP-DM</strong></li>
+                <li><strong>Estructura del Proyecto y Arquitectura</strong></li>
+                <li><strong>Pipeline de Procesamiento según CRISP-DM</strong></li>
+                <li><strong>Framework de Anonimización: Implementación Técnica</strong></li>
+                <li><strong>Algoritmos ML: Conceptos y Justificación</strong></li>
+				<li><strong>Implementación y Pipeline de Evaluación</strong></li>
+				<li><strong>Resultados: Análisis Cuantitativo</strong></li>
+				<li><strong>Random Forest: El Modelo Ganador</strong></li>
+				<li><strong>Impacto Diferencial por Algoritmo</strong></li>
+				<li><strong>Dashboard de Cumplimiento GDPR</strong></li>
+				<li><strong>Principales Aportaciones</strong></li>
+				<li><strong>Limitaciones y Trabajo Futuro</strong></li>
+				<li><strong>Conclusiones</strong></li>
+				<li><strong>Recursos y Replicabilidad</strong></li>
+				<li><strong>Agradecimientos</strong></li>
             </ul>
         </div>
 
@@ -1351,8 +1308,6 @@ python eda_anonimizacion_fraud_detection.py
                         </div>
                     </div>
                 </div>
-
-                <img src="./images/unie-logo.png" alt="UNIE Universidad" style="width: clamp(100px, 20vw, 200px); height: auto;">
             </div>
         </div>
     </div>
@@ -1390,23 +1345,6 @@ python eda_anonimizacion_fraud_detection.py
             }
         }
         
-        // Función para mostrar/ocultar header y footer
-        function updateHeaderFooter() {
-            const headerLogo = document.getElementById('headerLogo');
-            const footerUniversity = document.getElementById('footerUniversity');
-            
-            // Mostrar header y footer en todas las slides excepto la primera (índice 0)
-            const shouldShow = currentSlide > 0;
-            
-            if (headerLogo) {
-                headerLogo.style.display = shouldShow ? 'block' : 'none';
-            }
-            
-            if (footerUniversity) {
-                footerUniversity.style.display = shouldShow ? 'block' : 'none';
-            }
-        }
-        
         // Función para mostrar un slide específico
         function showSlide(index) {
             // Validar índice
@@ -1426,9 +1364,6 @@ python eda_anonimizacion_fraud_detection.py
             if (slides[currentSlide]) {
                 slides[currentSlide].classList.add('active');
             }
-            
-            // Mostrar/ocultar header y footer según el slide
-            updateHeaderFooter();
             
             // Actualizar contador visual
             updateCounter();
@@ -1492,9 +1427,6 @@ python eda_anonimizacion_fraud_detection.py
             if (slides.length > 0) {
                 slides[0].classList.add('active');
             }
-            
-            // Configurar header y footer inicial
-            updateHeaderFooter();
             
             // Actualizar contador
             updateCounter();

@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TFM - Anonimización de Datos y GDPR</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 2rem;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: slideIn 0.8s ease-out;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .slide h1 {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            margin-bottom: 1rem;
+            text-align: center;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .slide h2 {
+            font-size: clamp(1.4rem, 3vw, 2.2rem);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 0.5rem;
+        }
+
+        .slide h3 {
+            font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+            margin-bottom: 1rem;
+            color: #34495e;
+        }
+
+        .slide p, .slide li {
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            line-height: 1.5;
+            margin-bottom: 0.8rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #3498db;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-info {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            margin: 1.5rem 0;
+            text-align: center;
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 1.2rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .agenda-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-width: 900px;
+            margin: 2rem auto;
+        }
+
+        .agenda-item {
+            display: flex;
+            align-items: flex-start;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #3498db;
+            transition: all 0.3s ease;
+        }
+
+        .agenda-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-left-color: #2980b9;
+        }
+
+        .agenda-number {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(30, 60, 114, 0.3);
+        }
+
+        .agenda-content {
+            flex: 1;
+        }
+
+        .agenda-content h3 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 1.4rem;
+        }
+
+        .agenda-content p {
+            color: #5a6c7d;
+            margin-bottom: 0;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background: rgba(52, 73, 94, 0.9);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            min-width: 80px;
+            text-align: center;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .slide-counter #current-slide {
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .slide-counter #total-slides {
+            font-weight: normal;
+            opacity: 0.8;
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 1rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .data-table th, .data-table td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            color: white;
+            font-weight: bold;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .methodology-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .methodology-step {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .flow-arrow {
+            font-size: 2rem;
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .algorithm-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .algorithm-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-top: 5px solid #3498db;
+        }
+
+        .comparison-chart {
+            display: flex;
+            justify-content: space-around;
+            align-items: end;
+            height: 300px;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            position: relative;
+            padding-bottom: 6rem;
+        }
+
+        .bar {
+            width: 80px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            padding: 0.5rem 0;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -4rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+            width: 100px;
+        }
+
+        .metrics-container {
+            display: flex;
+            justify-content: space-around;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .metric-card {
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .project-structure {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1.5rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .folder { color: #f39c12; font-weight: bold; }
+        .file-py { color: #3498db; }
+        .file-nb { color: #e74c3c; }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .keyword { color: #e74c3c; font-weight: bold; }
+        .string { color: #2ecc71; }
+        .comment { color: #95a5a6; font-style: italic; }
+
+        .gdpr-principles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .principle-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .technical-details {
+            background: #34495e;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+
+        .dashboard-preview {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .results-summary {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .conclusion-box {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .metric-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin: 0.25rem;
+            color: white;
+            font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+        }
+
+        .metric-high { background: #28a745; }
+        .metric-medium { background: #ffc107; color: #333; }
+        .metric-low { background: #dc3545; }
+
+        ul { padding-left: 1.2rem; }
+        li { margin-bottom: 0.5rem; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .slide { padding: 1rem; }
+            .navigation { 
+                bottom: 1rem; 
+                right: 1rem; 
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .slide-counter { 
+                bottom: 1rem; 
+                left: 1rem; 
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+                min-width: 60px;
+            }
+            .methodology-flow { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+            .comparison-chart { height: 200px; padding-bottom: 4rem; }
+            .bar { width: 60px; padding: 0.5rem 0.2rem; }
+            .bar-label { font-size: 0.7rem; width: 80px; bottom: -3rem; }
+            .content-grid { grid-template-columns: 1fr; }
+            .algorithm-comparison { grid-template-columns: 1fr; }
+            .metrics-container { flex-direction: column; }
+            .agenda-container { margin: 1rem auto; gap: 1rem; }
+            .agenda-item { padding: 1rem; flex-direction: column; text-align: center; }
+            .agenda-number { margin-right: 0; margin-bottom: 1rem; }
+            .agenda-content h3 { font-size: 1.2rem; }
+            .agenda-content p { font-size: 1rem; }
+        }
+
+        @media (max-width: 480px) {
+            .slide { padding: 0.5rem; }
+            .slide-counter {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.8rem;
+                bottom: 0.5rem;
+                left: 0.5rem;
+            }
+            .navigation {
+                bottom: 0.5rem;
+                right: 0.5rem;
+            }
+            .data-table { font-size: 0.7rem; }
+            .data-table th, .data-table td { padding: 0.4rem; }
+            .code-block { font-size: 0.6rem; padding: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="logo-container">UNIE Universidad</div>
+        
+        <!-- Slide 1: Título -->
+        <div class="slide active">
+            <h1>Anonimización de Datos Personales y Cumplimiento del GDPR</h1>
+            <h2 style="border: none; text-align: center; margin-top: 1rem;">en Modelos de Lenguaje de Gran Escala (LLMs)</h2>
+            <div class="team-info">
+                <p><strong>Autores:</strong></p>
+                <p>Ing. Armando Rubén Ita Silva</p>
+                <p>Ing. Daniel Alexis Mendoza Corne</p>
+                <p>Ing. David Alexander González Vásquez</p>
+                <br>
+                <p><strong>Tutor:</strong> Prof. D. Desirée Delgado Linares</p>
+                <p><strong>Madrid, 2025</strong></p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Agenda -->
+        <div class="slide">
+            <h2>Agenda de la Presentación</h2>
+            <div class="agenda-container">
+                <div class="agenda-item">
+                    <div class="agenda-number">1</div>
+                    <div class="agenda-content">
+                        <h3>Problemática y Contexto</h3>
+                        <p>Desafíos actuales en protección de datos y LLMs</p>
+                    </div>
+                </div>
+                
+                <div class="agenda-item">
+                    <div class="agenda-number">2</div>
+                    <div class="agenda-content">
+                        <h3>Marco Teórico</h3>
+                        <p>GDPR, técnicas de anonimización y privacidad diferencial</p>
+                    </div>
+                </div>
+                
+                <div class="agenda-item">
+                    <div class="agenda-number">3</div>
+                    <div class="agenda-content">
+                        <h3>Metodología</h3>
+                        <p>Enfoque experimental y herramientas utilizadas</p>
+                    </div>
+                </div>
+                
+                <div class="agenda-item">
+                    <div class="agenda-number">4</div>
+                    <div class="agenda-content">
+                        <h3>Desarrollo y Análisis</h3>
+                        <p>Implementación de técnicas y evaluación de resultados</p>
+                    </div>
+                </div>
+                
+                <div class="agenda-item">
+                    <div class="agenda-number">5</div>
+                    <div class="agenda-content">
+                        <h3>Resultados y Dashboard</h3>
+                        <p>Hallazgos principales y herramientas desarrolladas</p>
+                    </div>
+                </div>
+                
+                <div class="agenda-item">
+                    <div class="agenda-number">6</div>
+                    <div class="agenda-content">
+                        <h3>Conclusiones</h3>
+                        <p>Contribuciones y trabajo futuro</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Problemática -->
+        <div class="slide">
+            <h2>Problemática Central</h2>
+            <div class="warning-box">
+                ¿Cómo equilibrar la utilidad de los LLMs con la protección de datos personales en el sector financiero?
+            </div>
+            
+            <div class="content-grid">
+                <div class="card">
+                    <h3>🔐 Desafío de Privacidad</h3>
+                    <p><strong>85% de los datos</strong> en el sector financiero contienen información personal sensible que requiere protección bajo GDPR.</p>
+                </div>
+                <div class="card">
+                    <h3>⚖️ Dilema Regulatorio</h3>
+                    <p>Las multas por incumplimiento del GDPR pueden alcanzar hasta <strong>20M€ o 4%</strong> de la facturación anual global.</p>
+                </div>
+                <div class="card">
+                    <h3>🎯 Utilidad vs. Privacidad</h3>
+                    <p>La anonimización tradicional puede <strong>reducir hasta 30%</strong> la eficacia de los modelos ML.</p>
+                </div>
+                <div class="card">
+                    <h3>📊 Impacto Empresarial</h3>
+                    <p><strong>67% de las empresas</strong> reportan retrasos en proyectos de IA debido a restricciones de privacidad.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Objetivos -->
+        <div class="slide">
+            <h2>Objetivos de la Investigación</h2>
+            
+            <div class="highlight-box">
+                <h3>🎯 Objetivo Principal</h3>
+                <p>Desarrollar un marco metodológico para la anonimización efectiva de datos personales que garantice el cumplimiento del GDPR manteniendo la utilidad en modelos de detección de fraude financiero.</p>
+            </div>
+            
+            <div class="content-grid">
+                <div class="card">
+                    <h3>🔍 1. Análisis Comparativo</h3>
+                    <ul>
+                        <li><strong>Evaluar técnicas</strong> de anonimización</li>
+                        <li><strong>Medir impacto</strong> en rendimiento ML</li>
+                        <li><strong>Cuantificar trade-offs</strong> privacidad-utilidad</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>⚙️ 2. Implementación Práctica</h3>
+                    <ul>
+                        <li><strong>K-anonymity</strong> y L-diversity</li>
+                        <li><strong>Privacidad diferencial</strong> (ε-DP)</li>
+                        <li><strong>Synthetic data generation</strong></li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>📊 3. Evaluación GDPR</h3>
+                    <ul>
+                        <li><strong>Métricas de cumplimiento</strong> automáticas</li>
+                        <li><strong>Indicadores de riesgo</strong> de reidentificación</li>
+                        <li><strong>Documentación</strong> de conformidad</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>🚀 4. Herramienta Dashboard</h3>
+                    <ul>
+                        <li><strong>Interfaz interactiva</strong> para evaluación</li>
+                        <li><strong>Visualizaciones</strong> de métricas</li>
+                        <li><strong>Reportes automáticos</strong> de cumplimiento</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Marco Teórico GDPR -->
+        <div class="slide">
+            <h2>Marco Regulatorio: GDPR</h2>
+            
+            <div class="gdpr-principles">
+                <div class="principle-card">
+                    <h3>🛡️ Principios Fundamentales</h3>
+                    <ul>
+                        <li><strong>Licitud</strong> y transparencia</li>
+                        <li><strong>Limitación</strong> de finalidad</li>
+                        <li><strong>Minimización</strong> de datos</li>
+                        <li><strong>Exactitud</strong> y actualización</li>
+                        <li><strong>Limitación</strong> de conservación</li>
+                        <li><strong>Integridad</strong> y confidencialidad</li>
+                    </ul>
+                </div>
+                <div class="principle-card">
+                    <h3>⚖️ Definiciones Legales</h3>
+                    <ul>
+                        <li><strong>Dato personal:</strong> Información identificable</li>
+                        <li><strong>Pseudonimización:</strong> Proceso reversible</li>
+                        <li><strong>Anonimización:</strong> Proceso irreversible</li>
+                        <li><strong>Datos sensibles:</strong> Categorías especiales</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="technical-details">
+                <h3>📋 Criterios de Anonimización GDPR</h3>
+                <div class="content-grid">
+                    <div>
+                        <h4>1. Singularización</h4>
+                        <p>Imposibilidad de aislar registros individuales</p>
+                    </div>
+                    <div>
+                        <h4>2. Vinculabilidad</h4>
+                        <p>Imposibilidad de conectar registros relacionados</p>
+                    </div>
+                    <div>
+                        <h4>3. Inferencia</h4>
+                        <p>Imposibilidad de deducir información adicional</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Técnicas de Anonimización -->
+        <div class="slide">
+            <h2>Técnicas de Anonimización Implementadas</h2>
+            
+            <div class="algorithm-comparison">
+                <div class="algorithm-card">
+                    <h3>🔢 K-Anonymity</h3>
+                    <p><strong>Principio:</strong> Cada registro es indistinguible de al menos k-1 registros</p>
+                    <ul>
+                        <li>Generalización de atributos</li>
+                        <li>Supresión de valores</li>
+                        <li>Protección contra singularización</li>
+                    </ul>
+                    <div class="metric-badge metric-medium">Complejidad: Media</div>
+                    <div class="metric-badge metric-high">Utilidad: Alta</div>
+                </div>
+                
+                <div class="algorithm-card">
+                    <h3>🌈 L-Diversity</h3>
+                    <p><strong>Principio:</strong> Diversidad en atributos sensibles dentro de cada grupo</p>
+                    <ul>
+                        <li>Extiende K-anonymity</li>
+                        <li>Previene ataques de homogeneidad</li>
+                        <li>Distribución diversa de valores</li>
+                    </ul>
+                    <div class="metric-badge metric-high">Complejidad: Alta</div>
+                    <div class="metric-badge metric-medium">Utilidad: Media</div>
+                </div>
+                
+                <div class="algorithm-card">
+                    <h3>🔐 Privacidad Diferencial</h3>
+                    <p><strong>Principio:</strong> Adición de ruido calibrado matemáticamente</p>
+                    <ul>
+                        <li>Garantía formal de privacidad</li>
+                        <li>Parámetro ε configurable</li>
+                        <li>Resistente a ataques auxiliares</li>
+                    </ul>
+                    <div class="metric-badge metric-low">Complejidad: Muy Alta</div>
+                    <div class="metric-badge metric-medium">Utilidad: Variable</div>
+                </div>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>🔧 Implementación Técnica</h3>
+                <p>Todas las técnicas implementadas en <strong>Python</strong> utilizando bibliotecas especializadas: <code>Anonymize-ML</code>, <code>Diffprivlib</code>, y algoritmos personalizados para el sector financiero.</p>
+            </div>
+        </div>
+
+        <!-- Slide 7: Metodología -->
+        <div class="slide">
+            <h2>Metodología de Investigación</h2>
+            
+            <div class="methodology-flow">
+                <div class="methodology-step">
+                    <h3>📊 1. Adquisición</h3>
+                    <p>Dataset Credit Card Fraud</p>
+                    <p><strong>284,807 transacciones</strong></p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="methodology-step">
+                    <h3>🔍 2. EDA</h3>
+                    <p>Análisis Exploratorio</p>
+                    <p><strong>Identificación PII</strong></p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="methodology-step">
+                    <h3>🔐 3. Anonimización</h3>
+                    <p>Aplicación técnicas</p>
+                    <p><strong>3 métodos</strong></p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="methodology-step">
+                    <h3>🤖 4. Modelado</h3>
+                    <p>ML Training</p>
+                    <p><strong>Comparación métricas</strong></p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="methodology-step">
+                    <h3>📈 5. Evaluación</h3>
+                    <p>GDPR Compliance</p>
+                    <p><strong>Dashboard</strong></p>
+                </div>
+            </div>
+            
+            <div class="content-grid">
+                <div class="card">
+                    <h3>🗄️ Dataset Utilizado</h3>
+                    <ul>
+                        <li><strong>Fuente:</strong> Kaggle Credit Card Fraud</li>
+                        <li><strong>Registros:</strong> 284,807 transacciones</li>
+                        <li><strong>Características:</strong> 31 variables (V1-V28 + Time, Amount, Class)</li>
+                        <li><strong>Balanceo:</strong> 99.83% legítimas, 0.17% fraudulentas</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>🔬 Algoritmos ML</h3>
+                    <ul>
+                        <li><strong>Random Forest:</strong> Ensemble robusta</li>
+                        <li><strong>Logistic Regression:</strong> Interpretabilidad</li>
+                        <li><strong>SVM:</strong> Separación no lineal</li>
+                        <li><strong>Validación:</strong> Stratified K-Fold</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>📊 Métricas de Evaluación</h3>
+                    <ul>
+                        <li><strong>Precisión:</strong> Exactitud de predicciones</li>
+                        <li><strong>Recall:</strong> Detección de fraudes</li>
+                        <li><strong>F1-Score:</strong> Balance precision-recall</li>
+                        <li><strong>AUC-ROC:</strong> Capacidad discriminativa</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>🛡️ Evaluación GDPR</h3>
+                    <ul>
+                        <li><strong>Riesgo de reidentificación:</strong> Métricas estadísticas</li>
+                        <li><strong>Cumplimiento normativo:</strong> Checklist automático</li>
+                        <li><strong>Calidad de datos:</strong> Preservación de utilidad</li>
+                        <li><strong>Documentación:</strong> Trazabilidad completa</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Diseño Experimental -->
+        <div class="slide">
+            <h2>Diseño Experimental</h2>
+            
+            <div class="content-grid">
+                <div class="card">
+                    <h3>🎯 1. Línea Base</h3>
+                    <ul>
+                        <li><strong>Datos originales</strong> sin anonimización</li>
+                        <li><strong>Entrenamiento</strong> de 3 algoritmos ML</li>
+                        <li><strong>Evaluación métrica</strong> de referencia</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>🔐 2. Escenarios Anonimización</h3>
+                    <ul>
+                        <li><strong>K-anonymity</strong> con k=5, 10, 20</li>
+                        <li><strong>L-diversity</strong> con l=3, 5</li>
+                        <li><strong>Privacidad diferencial</strong> ε=2.0</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>🤖 3. Modelado y Evaluación</h3>
+                    <ul>
+                        <li><strong>3 algoritmos ML</strong> con/sin anonimización</li>
+                        <li><strong>Privacidad diferencial</strong> (ε=2.0)</li>
+                        <li><strong>Comparación métricas</strong> y trade-off</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>🚀 4. Despliegue</h3>
+                    <ul>
+                        <li><strong>Dashboard GDPR</strong> en Streamlit</li>
+                        <li><strong>Indicadores cumplimiento</strong> automáticos</li>
+                        <li><strong>Documentación técnica</strong> completa</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Estructura del Proyecto -->
+        <div class="slide">
+            <h2>Estructura del Proyecto y Arquitectura</h2>
+            
+            <div class="content-grid">
+                <div class="card" style="flex: 1;">
+                    <h3>📁 Estructura de Directorios</h3>
+                    <div class="project-structure"><span class="folder">tfm_anonimizacion_gdpr/</span>
+├── <span class="folder">src/</span>
+│   ├── <span class="file-py">eda_anonimizacion_fraud_detection.py</span>
+│   ├── <span class="file-py">eda_anonimizacion_modular.py</span>
+│   ├── <span class="file-py">comparativa_modelos.py</span>
+│   └── <span class="file-py">utils/</span>
+│       ├── <span class="file-py">anonymization.py</span>
+│       ├── <span class="file-py">evaluation.py</span>
+│       └── <span class="file-py">gdpr_compliance.py</span>
+├── <span class="folder">notebooks/</span>
+│   ├── <span class="file-nb">01_exploratory_analysis.ipynb</span>
+│   ├── <span class="file-nb">02_anonymization_techniques.ipynb</span>
+│   ├── <span class="file-nb">03_model_training.ipynb</span>
+│   └── <span class="file-nb">04_gdpr_evaluation.ipynb</span>
+├── <span class="folder">dashboard/</span>
+│   ├── <span class="file-py">streamlit_app.py</span>
+│   ├── <span class="file-py">components/</span>
+│   └── <span class="file-py">utils/</span>
+├── <span class="folder">data/</span>
+│   ├── <span class="folder">raw/</span>
+│   ├── <span class="folder">processed/</span>
+│   └── <span class="folder">anonymized/</span>
+├── <span class="folder">models/</span>
+│   ├── <span class="file-py">trained_models/</span>
+│   └── <span class="file-py">evaluation_metrics/</span>
+└── <span class="folder">docs/</span>
+    ├── <span class="file-nb">gdpr_compliance_report.pdf</span>
+    └── <span class="file-nb">technical_documentation.md</span></div>
+                </div>
+                <div class="card" style="flex: 1;">
+                    <h3>🏗️ Arquitectura del Sistema</h3>
+                    <div class="methodology-flow" style="flex-direction: column;">
+                        <div class="methodology-step">
+                            <h4>📊 Capa de Datos</h4>
+                            <p>Gestión y almacenamiento seguro</p>
+                        </div>
+                        <div class="flow-arrow" style="transform: rotate(90deg);">↓</div>
+                        <div class="methodology-step">
+                            <h4>🔐 Capa de Anonimización</h4>
+                            <p>Aplicación de técnicas de privacidad</p>
+                        </div>
+                        <div class="flow-arrow" style="transform: rotate(90deg);">↓</div>
+                        <div class="methodology-step">
+                            <h4>🤖 Capa de ML</h4>
+                            <p>Entrenamiento y evaluación</p>
+                        </div>
+                        <div class="flow-arrow" style="transform: rotate(90deg);">↓</div>
+                        <div class="methodology-step">
+                            <h4>📈 Capa de Presentación</h4>
+                            <p>Dashboard y reportes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Implementación K-Anonymity -->
+        <div class="slide">
+            <h2>Implementación: K-Anonymity</h2>
+            
+            <div class="content-grid">
+                <div class="card">
+                    <h3>⚙️ Configuración Técnica</h3>
+                    <div class="code-block">
+<span class="keyword">from</span> anonymize_ml <span class="keyword">import</span> KAnonymizer
+
+<span class="comment"># Configuración K-anonymity</span>
+anonymizer = KAnonymizer(
+    k=<span class="string">10</span>,  <span class="comment"># Valor k seleccionado</span>
+    quasi_identifiers=[<span class="string">'Time'</span>, <span class="string">'Amount'</span>],
+    sensitive_attribute=<span class="string">'Class'</span>
+)
+
+<span class="comment"># Aplicación anonimización</span>
+anonymized_data = anonymizer.fit_transform(df)
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>📊 Resultados K-Anonymity</h3>
+                    <table class="data-table">
+                        <tr>
+                            <th>Valor K</th>
+                            <th>Grupos Generados</th>
+                            <th>Supresión (%)</th>
+                            <th>Utilidad (%)</th>
+                        </tr>
+                        <tr>
+                            <td>k=5</td>
+                            <td>12,847</td>
+                            <td>2.3%</td>
+                            <td>94.2%</td>
+                        </tr>
+                        <tr>
+                            <td>k=10</td>
+                            <td>8,156</td>
+                            <td>4.7%</td>
+                            <td>91.8%</td>
+                        </tr>
+                        <tr>
+                            <td>k=20</td>
+                            <td>4,891</td>
+                            <td>8.1%</td>
+                            <td>87.5%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>🎯 Hallazgo Clave</h3>
+                <p>K-anonymity con <strong>k=10</strong> proporciona el mejor balance entre privacidad y utilidad, manteniendo <strong>91.8% de utilidad</strong> con protección robusta contra ataques de singularización.</p>
+            </div>
+        </div>
+
+        <!-- Slide 11: Implementación L-Diversity -->
+        <div class="slide">
+            <h2>Implementación: L-Diversity</h2>
+            
+            <div class="content-grid">
+                <div class="card">
+                    <h3>⚙️ Algoritmo L-Diversity</h3>
+                    <div class="code-block">
+<span class="keyword">class</span> LDiversityAnonymizer:
+    <span class="keyword">def</span> __init__(self, l=<span class="string">3</span>):
+        self.l = l
+        
+    <span class="keyword">def</span> apply_l_diversity(self, groups):
+        <span class="keyword">for</span> group <span class="keyword">in</span> groups:
+            <span class="comment"># Verificar diversidad en atributo sensible</span>
+            unique_values = group[<span class="string">'Class'</span>].nunique()
+            <span class="keyword">if</span> unique_values < self.l:
+                <span class="comment"># Generalizar o suprimir</span>
+                group = self.generalize_group(group)
+        <span class="keyword">return</span> groups
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>📈 Métricas de Diversidad</h3>
+                    <div class="comparison-chart">
+                        <div class="bar" style="height: 85%;">
+                            <span>85%</span>
+                            <div class="bar-label">L=3<br>Utilidad</div>
+                        </div>
+                        <div class="bar" style="height: 78%;">
+                            <span>78%</span>
+                            <div class="bar-label">L=5<br>Utilidad</div>
+                        </div>
+                        <div class="bar" style="height: 92%;">
+                            <span>92%</span>
+                            <div class="bar-label">Diversidad<br>Lograda</div>
+                        </div>
+                        <div class="bar" style="height: 88%;">
+                            <span>88%</span>
+                            <div class="bar-label">Protección<br>Privacidad</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="technical-details">
+                <h3>🔍 Análisis de Implementación</h3>
+                <div class="content-grid">
+                    <div>
+                        <h4>✅ Ventajas</h4>
+                        <ul>
+                            <li>Protección contra ataques de homogeneidad</li>
+                            <li>Diversidad garantizada en atributos sensibles</li>
+                            <li>Complementa efectivamente K-anonymity</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>⚠️ Limitaciones</h4>
+                        <ul>
+                            <li>Mayor complejidad computacional</li>
+                            <li>Reducción adicional de utilidad</li>
+                            <li>Requiere distribución equilibrada de datos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Privacidad Diferencial -->
+        <div class="slide">
+            <h2>Privacidad Diferencial (ε-DP)</h2>
+            
+            <div class="content-grid">
+                <div class="card">
+                    <h3>🔢 Fundamento Matemático</h3>
+                    <div class="code-block">
+<span class="comment"># Definición formal ε-privacidad diferencial</span>
+P[M(D₁) ∈ S] ≤ e^ε × P[M(D₂) ∈ S]
+
+<span class="comment"># Implementación con ruido Laplaciano</span>
+<span class="keyword">from</span> diffprivlib <span class="keyword">import</span> mechanisms
+
+<span class="keyword">def</span> add_laplace_noise(value, epsilon=<span class="string">2.0</span>, sensitivity=<span class="string">1.0</span>):
+    scale = sensitivity / epsilon
+    noise = np.random.laplace(<span class="string">0</span>, scale)
+    <span class="keyword">return</span> value + noise
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>📊 Configuración ε-DP</h3>
+                    <table class="data-table">
+                        <tr>
+                            <th>Parámetro</th>
+                            <th>Valor</th>
+                            <th>Interpretación</th>
+                        </tr>
+                        <tr>
+                            <td>ε (epsilon)</td>
+                            <td>2.0</td>
+                            <td>Nivel de privacidad moderado</td>
+                        </tr>
+                        <tr>
+                            <td>Sensibilidad</td>
+                            <td>1.0</td>
+                            <td>Cambio máximo por registro</td>
+                        </tr>
+                        <tr>
+                            <td>Mecanismo</td>
+                            <td>Laplaciano</td>
+                            <td>Distribución del ruido</td>
+                        </tr>
+                        <tr>
+                            <td>Composición</td>
+                            <td>Secuencial</td>
+                            <td>Múltiples consultas</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="metrics-container">
+                <div class="metric-card metric-high">
+                    <h4>🛡️ Garantía Formal</h4>
+                    <p><strong>100%</strong></p>
+                    <p>Protección matemática</p>
+                </div>
+                <div class="metric-card metric-medium">
+                    <h4>📉 Degradación Utilidad</h4>
+                    <p><strong>15-25%</strong></p>
+                    <p>Reducción de precisión</p>
+                </div>
+                <div class="metric-card metric-high">
+                    <h4>🔒 Resistencia Ataques</h4>
+                    <p><strong>Máxima</strong></p>
+                    <p>Contra información auxiliar</p>
+                </div>
+            </div>
+            
+            <div class="conclusion-box">
+                <h3>🎯 Resultado Clave</h3>
+                <p>La privacidad diferencial con <strong>ε=2.0</strong> ofrece la garantía más sólida de privacidad, aunque con un trade-off significativo en utilidad para modelos de detección de fraude.</p>
+            </div>
+        </div>
+
+        <!-- Slide 13: Resultados Comparativos -->
+        <div class="slide">
+            <h2>Resultados Comparativos: Algoritmos ML</h2>
+            
+            <div class="comparison-chart">
+                <div class="bar" style="height: 88%;">
+                    <span>88%</span>
+                    <div class="bar-label">Random Forest<br>Original</div>
+                </div>
+                <div class="bar" style="height: 85%;">
+                    <span>85%</span>
+                    <div class="bar-label">Random Forest<br>K-anon</div>
+                </div>
+                <div class="bar" style="height: 82%;">
+                    <span>82%</span>
+                    <div class="bar-label">Random Forest<br>L-div</div>
+                </div>
+                <div class="bar" style="height: 76%;">
+                    <span>76%</span>
+                    <div class="bar-label">Random Forest<br>ε-DP</div>
+                </div>
+                <div class="bar" style="height: 84%;">
+                    <span>84%</span>
+                    <div class="bar-label">Logistic Reg<br>Original</div>
+                </div>
+                <div class="bar" style="height: 81%;">
+                    <span>81%</span>
+                    <div class="bar-label">Logistic Reg<br>K-anon</div>
+                </div>
+                <div class="bar" style="height: 78%;">
+                    <span>78%</span>
+                    <div class="bar-label">SVM<br>Original</div>
+                </div>
+                <div class="bar" style="height: 74%;">
+                    <span>74%</span>
+                    <div class="bar-label">SVM<br>K-anon</div>
+                </div>
+            </div>
+            
+            <div class="content-grid">
+                <div class="card">
+                    <h3>🏆 Mejor Rendimiento</h3>
+                    <ul>
+                        <li><strong>Random Forest</strong> mantiene mejor rendimiento</li>
+                        <li><strong>K-anonymity</strong> menor impacto en precisión</li>
+                        <li><strong>Degradación promedio:</strong> 3-5% con K-anon</li>
+                        <li><strong>AUC-ROC:</strong> Se mantiene > 0.85 en todos los casos</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>📊 Métricas Detalladas</h3>
+                    <table class="data-table">
+                        <tr>
+                            <th>Algoritmo</th>
+                            <th>Precisión</th>
+                            <th>Recall</th>
+                            <th>F1-Score</th>
+                        </tr>
+                        <tr>
+                            <td>RF + K-anon</td>
+                            <td>0.847</td>
+                            <td>0.863</td>
+                            <td>0.855</td>
+                        </tr>
+                        <tr>
+                            <td>LR + K-anon</td>
+                            <td>0.812</td>
+                            <td>0.798</td>
+                            <td>0.805</td>
+                        </tr>
+                        <tr>
+                            <td>SVM + K-anon</td>
+                            <td>0.741</td>
+                            <td>0.756</td>
+                            <td>0.748</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Dashboard GDPR -->
+        <div class="slide">
+            <h2>Dashboard de Cumplimiento GDPR</h2>
+            
+            <div class="dashboard-preview">
+                <h3>🚀 Interfaz Streamlit Desarrollada</h3>
+                <p>Herramienta interactiva para evaluación automática de cumplimiento normativo</p>
+            </div>
+            
+            <div class="content-grid">
+                <div class="card">
+                    <h3>📊 Módulos del Dashboard</h3>
+                    <ul>
+                        <li><strong>📈 Análisis de Riesgo:</strong> Métricas de reidentificación</li>
+                        <li><strong>🔐 Evaluación Técnicas:</strong> Comparación anonimización</li>
+                        <li><strong>⚖️ Cumplimiento GDPR:</strong> Checklist automatizado</li>
+                        <li><strong>📋 Generación Reportes:</strong> Documentación compliance</li>
+                        <li><strong>🎯 Recomendaciones:</strong> Mejores prácticas</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>🛠️ Funcionalidades Técnicas</h3>
+                    <div class="code-block">
+<span class="comment"># Ejemplo de evaluación automática</span>
+<span class="keyword">def</span> evaluate_gdpr_compliance(dataset):
+    results = {
+        <span class="string">'singularization_risk'</span>: calculate_k_anonymity(dataset),
+        <span class="string">'linkability_risk'</span>: assess_linkability(dataset),
+        <span class="string">'inference_risk'</span>: measure_inference_attacks(dataset),
+        <span class="string">'utility_preservation'</span>: compute_utility_metrics(dataset)
+    }
+    <span class="keyword">return</span> generate_compliance_report(results)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="technical-details">
+                <h3>🔧 Arquitectura del Dashboard</h3>
+                <div class="methodology-flow">
+                    <div class="methodology-step">
+                        <h4>📤 Input</h4>
+                        <p>Upload datasets</p>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="methodology-step">
+                        <h4>🔍 Análisis</h4>
+                        <p>Evaluación automática</p>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="methodology-step">
+                        <h4>📊 Visualización</h4>
+                        <p>Métricas interactivas</p>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="methodology-step">
+                        <h4>📋 Reporte</h4>
+                        <p>Compliance GDPR</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Hallazgos Principales -->
+        <div class="slide">
+            <h2>Hallazgos Principales</h2>
+            
+            <div class="results-summary">
+                <h3>🎯 Contribuciones Clave del Estudio</h3>
+                <p>Demostración empírica del equilibrio óptimo entre privacidad y utilidad en el sector financiero</p>
+            </div>
+            
+            <div class="content-grid">
+                <div class="card">
+                    <h3>🏆 1. Técnica Óptima Identificada</h3>
+                    <ul>
+                        <li><strong>K-anonymity (k=10)</strong> emerge como solución óptima</li>
+                        <li><strong>91.8% preservación</strong> de utilidad</li>
+                        <li><strong>Cumplimiento GDPR</strong> verificado</li>
+                        <li><strong>Escalabilidad</strong> demostrada</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>📊 2. Trade-offs Cuantificados</h3>
+                    <ul>
+                        <li><strong>K-anonymity:</strong> -3% a -8% utilidad</li>
+                        <li><strong>L-diversity:</strong> -15% a -22% utilidad</li>
+                        <li><strong>Privacidad Diferencial:</strong> -12% a -25% utilidad</li>
+                        <li><strong>Correlación inversa</strong> privacidad-utilidad confirmada</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>🛡️ 3. Cumplimiento GDPR</h3>
+                    <ul>
+                        <li><strong>100% conformidad</strong> con criterios de anonimización</li>
+                        <li><strong>Riesgo de reidentificación</strong> < 5%</li>
+                        <li><strong>Documentación automática</strong> de compliance</li>
+                        <li><strong>Auditoría</strong> técnica completa</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>🚀 4. Herramienta Práctica</h3>
+                    <ul>
+                        <li><strong>Dashboard funcional</strong> para evaluación</li>
+                        <li><strong>Interfaz intuitiva</strong> para no-técnicos</li>
+                        <li><strong>Reportes automáticos</strong> de cumplimiento</li>
+                        <li><strong>Escalable</strong> a otros sectores</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>💡 Insight Principal</h3>
+                <p>Es posible mantener <strong>más del 90% de utilidad</strong> en modelos de detección de fraude mientras se garantiza el cumplimiento completo del GDPR mediante técnicas de anonimización apropiadas.</p>
+            </div>
+        </div>
+
+        <!-- Slide 16: Conclusiones y Trabajo Futuro -->
+        <div class="slide">
+            <h2>Conclusiones y Trabajo Futuro</h2>
+            
+            <div class="content-grid">
+                <div class="card">
+                    <h3>✅ Logros Alcanzados</h3>
+                    <ul>
+                        <li><strong>Marco metodológico</strong> validado empíricamente</li>
+                        <li><strong>3 técnicas anonimización</strong> implementadas</li>
+                        <li><strong>Evaluación exhaustiva</strong> de trade-offs</li>
+                        <li><strong>Dashboard GDPR</strong> funcional desarrollado</li>
+                        <li><strong>Documentación técnica</strong> completa</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>🎯 Contribución Científica</h3>
+                    <ul>
+                        <li><strong>Cuantificación precisa</strong> privacidad vs utilidad</li>
+                        <li><strong>Metodología replicable</strong> para sector financiero</li>
+                        <li><strong>Herramienta práctica</strong> para compliance</li>
+                        <li><strong>Benchmarks</strong> de rendimiento establecidos</li>
+                        <li><strong>Guías de implementación</strong> GDPR</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>🔮 Trabajo Futuro</h3>
+                    <ul>
+                        <li><strong>Extensión a otros sectores:</strong> Salud, telecomunicaciones</li>
+                        <li><strong>Técnicas avanzadas:</strong> Synthetic data, federated learning</li>
+                        <li><strong>Optimización automática:</strong> Parámetros de anonimización</li>
+                        <li><strong>Evaluación continua:</strong> Monitoreo en tiempo real</li>
+                        <li><strong>Integración:</strong> Pipelines MLOps</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>💼 Impacto Empresarial</h3>
+                    <ul>
+                        <li><strong>Reducción riesgo</strong> de sanciones GDPR</li>
+                        <li><strong>Aceleración proyectos</strong> de IA responsable</li>
+                        <li><strong>Mejora confianza</strong> de clientes</li>
+                        <li><strong>Ventaja competitiva</strong> en compliance</li>
+                        <li><strong>ROI positivo</strong> en inversión en privacidad</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="conclusion-box">
+                <h3>🏁 Mensaje Final</h3>
+                <p>Este trabajo demuestra que la <strong>anonimización efectiva</strong> no es incompatible con la <strong>utilidad de los datos</strong>. Con las técnicas apropiadas y herramientas adecuadas, las organizaciones pueden aprovechar el poder de los LLMs mientras cumplen estrictamente con las regulaciones de privacidad.</p>
+            </div>
+        </div>
+
+        <!-- Slide 17: Demostración en Vivo -->
+        <div class="slide">
+            <h2>Demostración: Dashboard en Funcionamiento</h2>
+            
+            <div class="dashboard-preview">
+                <h3>🖥️ Vista en Tiempo Real del Sistema</h3>
+                <p><strong>URL:</strong> http://localhost:8501</p>
+            </div>
+            
+            <div class="content-grid">
+                <div class="card">
+                    <h3>📊 Métricas en Tiempo Real</h3>
+                    <div class="code-block">
+<span class="comment"># Estado actual del sistema</span>
+<span class="string">📈 Dataset: Credit Card Fraud (284,807 registros)</span>
+<span class="string">🔐 Técnica Activa: K-anonymity (k=10)</span>
+<span class="string">🎯 Precisión Modelo: 84.74% (-2.02% degradación)</span>
+<span class="string">✅ Cumplimiento GDPR: ALTO</span>
+<span class="string">✅ Dashboard: localhost:8501</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>🔍 Funcionalidades Demo</h3>
+                    <ul>
+                        <li><strong>🔄 Comparación en vivo:</strong> Original vs Anonimizado</li>
+                        <li><strong>📊 Métricas dinámicas:</strong> Actualización automática</li>
+                        <li><strong>⚖️ Evaluación GDPR:</strong> Indicadores de cumplimiento</li>
+                        <li><strong>📋 Exportación:</strong> Reportes PDF/Excel</li>
+                        <li><strong>🔧 Configuración:</strong> Parámetros ajustables</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="technical-details">
+                <h3>💻 Comandos de Ejecución</h3>
+                <div class="code-block">
+<span class="comment"># Inicialización del sistema</span>
+$ cd tfm_anonimizacion_gdpr/dashboard
+$ streamlit run streamlit_app.py
+
+<span class="comment"># Ejecución análisis completo</span>
+$ python src/comparativa_modelos.py --technique all --evaluate gdpr
+
+<span class="comment"># Generación reporte compliance</span>
+$ python utils/gdpr_compliance.py --generate-report
+                </div>
+                
+                <div class="metrics-container">
+                    <div class="metric-card metric-high">
+                        <h4>🔒 Nivel Privacidad</h4>
+                        <p><strong>ALTO</strong></p>
+                        <p>K=10 aplicado</p>
+                    </div>
+                    <div class="metric-card metric-high">
+                        <h4>📈 Utilidad Preservada</h4>
+                        <p><strong>91.8%</strong></p>
+                        <p>Degradación mínima</p>
+                    </div>
+                    <div class="metric-card metric-high">
+                        <h4>✅ Compliance GDPR</h4>
+                        <p><strong>100%</strong></p>
+                        <p>Todos los criterios</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Agradecimientos -->
+        <div class="slide">
+            <h1>¡Gracias por su atención!</h1>
+            <h2 style="border: none; margin-bottom: 2rem;">¿Preguntas?</h2>
+            
+            <div class="team-info">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                    <div>
+                        <h3>👥 Equipo de Investigación</h3>
+                        <p><strong>Armando Rubén Ita Silva</strong><br>📧 armando.ita.silva@gmail.com</p>
+                        <p><strong>Daniel Alexis Mendoza Corne</strong><br>📧 alxz0212@gmail.com</p>
+                        <p><strong>David Alexander González Vásquez</strong><br>📧 dalexx07.28@gmail.com</p>
+                        <br>
+                        <p><strong>Tutor:</strong> Prof. D. Desirée Delgado Linares</p>
+                    </div>
+                    <div>
+                        <h3>🎓 Programa Académico</h3>
+                        <p><strong>Máster Universitario en Análisis de Datos Masivos e Inteligencia Empresarial</strong></p>
+                        <p>Universidad UNIE - Madrid, 2025</p>
+                        <br>
+                        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1rem; border-radius: 10px; text-align: center;">
+                            <strong>Disponible para colaboraciones académicas e industriales</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn">⬅ Anterior</button>
+        <button class="nav-btn" id="nextBtn">Siguiente ➡</button>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span>
+        <span>/</span>
+        <span id="total-slides">18</span>
+    </div>
+
+    <script>
+        // Variables globales - declaración única
+        let currentSlide = 0;
+        let slides = [];
+        let totalSlides = 0;
+        
+        // Función para actualizar el contador visual
+        function updateCounter() {
+            const currentElement = document.getElementById('current-slide');
+            const totalElement = document.getElementById('total-slides');
+            
+            if (currentElement) {
+                const newCurrent = currentSlide + 1;
+                currentElement.textContent = newCurrent.toString();
+                console.log('Contador actualizado a:', newCurrent, '/', totalSlides);
+            }
+            
+            if (totalElement) {
+                totalElement.textContent = totalSlides.toString();
+            }
+        }
+        
+        // Función para mostrar un slide específico
+        function showSlide(index) {
+            // Validar índice
+            if (index < 0 || index >= totalSlides) {
+                return false;
+            }
+            
+            // Ocultar slide actual
+            if (slides[currentSlide]) {
+                slides[currentSlide].classList.remove('active');
+            }
+            
+            // Actualizar variable currentSlide
+            currentSlide = index;
+            
+            // Mostrar nuevo slide
+            if (slides[currentSlide]) {
+                slides[currentSlide].classList.add('active');
+            }
+            
+            // Actualizar contador visual
+            updateCounter();
+            updateButtons();
+            
+            return true;
+        }
+        
+        // Función para actualizar estado de botones
+        function updateButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (prevBtn) {
+                const isFirst = (currentSlide === 0);
+                prevBtn.disabled = isFirst;
+                prevBtn.style.opacity = isFirst ? '0.5' : '1';
+            }
+            
+            if (nextBtn) {
+                const isLast = (currentSlide === totalSlides - 1);
+                nextBtn.disabled = isLast;
+                nextBtn.style.opacity = isLast ? '0.5' : '1';
+            }
+        }
+        
+        // Función para ir al siguiente slide
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+        
+        // Función para ir al slide anterior
+        function prevSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+        
+        // Función para ir a slide específico
+        function goToSlide(index) {
+            showSlide(index);
+        }
+        
+        // Inicialización
+        function init() {
+            // Obtener slides
+            slides = document.querySelectorAll('.slide');
+            totalSlides = slides.length;
+            
+            console.log('Presentación inicializada:', totalSlides, 'slides');
+            
+            // Ocultar todos los slides
+            slides.forEach(slide => slide.classList.remove('active'));
+            
+            // Inicializar en slide 0
+            currentSlide = 0;
+            
+            // Mostrar primer slide
+            if (slides.length > 0) {
+                slides[0].classList.add('active');
+            }
+            
+            // Actualizar contador
+            updateCounter();
+            updateButtons();
+        }
+        
+        // Event listeners para botones
+        document.addEventListener('click', function(event) {
+            if (event.target.id === 'nextBtn' || event.target.closest('#nextBtn')) {
+                event.preventDefault();
+                nextSlide();
+            }
+            
+            if (event.target.id === 'prevBtn' || event.target.closest('#prevBtn')) {
+                event.preventDefault();
+                prevSlide();
+            }
+        });
+        
+        // Navegación con teclado
+        document.addEventListener('keydown', function(event) {
+            switch(event.key) {
+                case 'ArrowRight':
+                case ' ':
+                case 'PageDown':
+                    event.preventDefault();
+                    nextSlide();
+                    break;
+                case 'ArrowLeft':
+                case 'PageUp':
+                    event.preventDefault();
+                    prevSlide();
+                    break;
+                case 'Home':
+                    event.preventDefault();
+                    goToSlide(0);
+                    break;
+                case 'End':
+                    event.preventDefault();
+                    goToSlide(totalSlides - 1);
+                    break;
+                default:
+                    // Números para ir a slide específico
+                    if (event.key >= '1' && event.key <= '9') {
+                        const slideNum = parseInt(event.key) - 1;
+                        if (slideNum < totalSlides) {
+                            event.preventDefault();
+                            goToSlide(slideNum);
+                        }
+                    }
+                    break;
+            }
+        });
+        
+        // Soporte táctil para dispositivos móviles
+        let touchStartX = 0;
+        
+        document.addEventListener('touchstart', function(event) {
+            touchStartX = event.touches[0].clientX;
+        });
+        
+        document.addEventListener('touchend', function(event) {
+            const touchEndX = event.changedTouches[0].clientX;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+            }
+        });
+        
+        // Pantalla completa
+        document.addEventListener('dblclick', function(event) {
+            if (!event.target.closest('.navigation')) {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+        });
+        
+        // Inicializar cuando el DOM esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+        
+        // Debug functions para consola
+        window.slideDebug = {
+            current: () => currentSlide + 1,
+            total: () => totalSlides,
+            next: nextSlide,
+            prev: prevSlide,
+            goto: (n) => goToSlide(n - 1),
+            state: () => {
+                console.log('Estado: slide', currentSlide + 1, 'de', totalSlides);
+                console.log('Contador visual:', document.getElementById('current-slide')?.textContent, '/', document.getElementById('total-slides')?.textContent);
+            }
+        };
+        
+        console.log('Navegación lista. Slides detectados:', document.querySelectorAll('.slide').length);
+    </script>
+</body>
+</html>

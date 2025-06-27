@@ -2,14 +2,13 @@
 ## Guía Completa de Respuestas para Defensa - Universidad UNIE Madrid 2025
 
 **Autores:** Ing. Armando Rubén Ita Silva, Ing. Daniel Alexis Mendoza Corne, Ing. David Alexander González Vásquez  
-**Tutor:** Prof. D. Desirée Delgado Linares  
-**Tribunal:** Presidente, Vocal y Secretario
+**Tutor:** Prof. D. Desirée Delgado Linares 
 
 ---
 
-## 🎓 PRESIDENTE DEL TRIBUNAL - Metodología y Rigor Científico
+## 🎓  Metodología y Rigor Científico
 
-### **P1. ¿Por qué eligieron específicamente el dataset PaySim1 y no datos reales de una institución financiera? ¿Cómo justifican que los resultados sean extrapolables a entornos reales?**
+### **Elección del dataset PaySim1 y no datos reales de una institución financiera? ¿Cómo justifican que los resultados sean extrapolables a entornos reales**
 
 **Razones fundamentales:**
 
@@ -21,7 +20,7 @@
 
 **Sobre la extrapolabilidad**: Los resultados son extrapolables porque PaySim1 replica fielmente las características estadísticas de datos bancarios reales, incluyendo distribuciones de montos, tipos de transacciones y patrones temporales. La pérdida de rendimiento del -2.02% en Random Forest que observamos es consistente con literatura académica previa en anonimización financiera.
 
-### **P2. La metodología CRISP-DM es de 2000. ¿Consideraron metodologías más modernas como TDSP (Team Data Science Process) o KDD-R (Knowledge Discovery and Data Mining for Responsible AI)? ¿Qué les llevó a mantener CRISP-DM?**
+### **La metodología CRISP-DM es de 2000. Se consideran metodologías más modernas como TDSP (Team Data Science Process) o KDD-R (Knowledge Discovery and Data Mining for Responsible AI)? ¿Qué les llevó a mantener CRISP-DM**
 
 **Evaluamos las tres metodologías mencionadas. Mantuvimos CRISP-DM por tres razones específicas:**
 
@@ -33,7 +32,7 @@
 
 TDSP sería más apropiado para equipos multidisciplinarios grandes, y KDD-R para proyectos con mayor énfasis en responsible AI, pero nuestro enfoque específico en cumplimiento normativo se benefició más de la estructura consolidada de CRISP-DM.
 
-### **P3. ¿Cómo validaron que el valor k=10 para k-anonimato es óptimo? ¿Realizaron análisis de sensibilidad con otros valores (k=5, k=15, k=20)?**
+### **Validación del valor k=10 para k-anonimato es óptimo? ¿Realizaron análisis de sensibilidad con otros valores (k=5, k=15, k=20)**
 
 **k=10 se basó en el estándar de facto de la literatura académica (Sweeney, 2002), pero reconocemos esta limitación.** No realizamos análisis de sensibilidad exhaustivo con k=5, k=15, k=20, lo cual es una debilidad metodológica.
 
@@ -44,7 +43,7 @@ TDSP sería más apropiado para equipos multidisciplinarios grandes, y KDD-R par
 
 **Para trabajo futuro**, propondríamos análisis de sensibilidad evaluando la curva k vs pérdida de utilidad, especialmente en el rango k=5 a k=25.
 
-### **P4. El épsilon (ε=2.0) para privacidad diferencial, ¿se basó en literatura académica específica o fue una decisión empírica? ¿Qué impacto tendría ε=1.0 o ε=3.0?**
+### **El valor del épsilon (ε=2.0) para privacidad diferencial, ¿se basó en literatura académica específica o fue una decisión empírica? ¿Qué impacto tendría ε=1.0 o ε=3.0**
 
 **ε=2.0 se basó en literatura académica específica.** Según Li et al. (2023) y las implementaciones de Apple/Google, valores entre 1-3 representan un equilibrio aceptable entre privacidad y utilidad en contextos financieros.
 
@@ -55,7 +54,7 @@ TDSP sería más apropiado para equipos multidisciplinarios grandes, y KDD-R par
 
 **Limitación reconocida**: No exploramos ε=1.0 o ε=3.0 empíricamente. Proyectamos que ε=1.0 aumentaría la pérdida de F1-Score a ~8-10%, mientras ε=3.0 la reduciría a ~1% pero comprometería las garantías de privacidad.
 
-### **P5. ¿Cuál consideran que es la principal aportación novel de su trabajo frente a la literatura existente en anonimización financiera?**
+### **Principal aportación del trabajo frente a la literatura existente en anonimización financiera**
 
 **Nuestra contribución novel es triple:**
 
@@ -67,7 +66,7 @@ TDSP sería más apropiado para equipos multidisciplinarios grandes, y KDD-R par
 
 La literatura previa trata estas técnicas de forma aislada. Nuestro enfoque holístico permite implementación industrial real manteniendo trazabilidad legal completa.
 
-### **P6. ¿Han identificado alguna técnica de anonimización que NO sea compatible con el análisis de fraudes? ¿Cuáles serían los trade-offs intolerables?**
+### **Técnicas de anonimización que NO sean compatible con el análisis de fraudes. Cuáles serían los trade-offs intolerables?**
 
 **Sí, identificamos tres limitaciones críticas:**
 
@@ -79,7 +78,7 @@ La literatura previa trata estas técnicas de forma aislada. Nuestro enfoque hol
 
 **Trade-offs intolerables**: Cualquier técnica que reduzca la sensibilidad por debajo del 70% sería inviable operacionalmente, ya que los costos de fraudes no detectados superarían los beneficios de protección de privacidad.
 
-### **P7. Su framework, ¿es específico para detección de fraudes o es generalizable a otros casos de uso en ML financiero (credit scoring, risk assessment)?**
+### **El framework, ¿es específico para detección de fraudes o es generalizable a otros casos de uso en ML financiero (credit scoring, risk assessment)?**
 
 **Es generalizable con adaptaciones.** El framework se diseñó modularmente:
 
@@ -97,10 +96,7 @@ La literatura previa trata estas técnicas de forma aislada. Nuestro enfoque hol
 La arquitectura modular permite reutilizar 70-80% del código base, adaptando principalmente los algoritmos de agrupación k-anónima según las características específicas de cada dominio.
 
 ---
-
-## 👩‍🏫 VOCAL DEL TRIBUNAL - Aspectos Técnicos Profundos
-
-### **P8. Random Forest resultó más robusto (-2.02% degradación) que XGBoost (-19.90%). ¿A qué atribuyen técnicamente esta diferencia? ¿Es por la naturaleza ensemble vs boosting?**
+### Random Forest resultó más robusto (-2.02% degradación) que XGBoost (-19.90%). ¿A qué atribuyen técnicamente esta diferencia? ¿Es por la naturaleza ensemble vs boosting?**
 
 **La diferencia se debe a diferencias arquitecturales fundamentales:**
 
@@ -116,7 +112,7 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 
 **Conclusión técnica**: Random Forest es inherentemente más compatible con datos anonimizados porque su naturaleza ensemble promedia las imprecisiones, mientras XGBoost requiere precisión granular para su proceso de boosting.
 
-### **P9. ¿Evaluaron el impacto de la anonimización en la interpretabilidad de los modelos? ¿Cómo afecta a la explicabilidad requerida por GDPR Art. 22?**
+### **Evaluación del impacto de la anonimización en la interpretabilidad de los modelos? ¿Cómo afecta a la explicabilidad requerida por GDPR Art. 22?**
 
 **Limitación reconocida**: No evaluamos exhaustivamente la interpretabilidad post-anonimización, lo cual es crítico para Art. 22 (derecho a no ser objeto de decisiones automatizadas).
 
@@ -132,7 +128,7 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 
 **Trabajo futuro necesario**: Evaluar si explicaciones agrupadas satisfacen requisitos legales de "información significativa" del Art. 22.
 
-### **P10. La seudonimización con SHA-256, ¿consideraron el riesgo de ataques de diccionario o rainbow tables? ¿Qué medidas adicionales recomendarían?**
+### **La seudonimización con SHA-256, ¿consideraron el riesgo de ataques de diccionario o rainbow tables? ¿Qué medidas adicionales recomendarían?**
 
 **Riesgo reconocido pero mitigado:**
 
@@ -151,7 +147,7 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 - **Pepper global**: Salt adicional conocido solo por el sistema
 - **Monitoreo de patrones**: Detección de intentos de reversión masiva
 
-### **P11. ¿Implementaron técnicas de data augmentation para compensar la pérdida de granularidad del k-anonimato?**
+### **Implementación de técnicas de data augmentation para compensar la pérdida de granularidad del k-anonimato**
 
 **No implementamos data augmentation**, lo cual reconocemos como una limitación. Las técnicas de k-anonimato efectivamente reducen la granularidad al agrupar registros, y data augmentation podría haber compensado esta pérdida.
 
@@ -164,7 +160,7 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 
 **Para trabajo futuro**: Evaluaríamos si data augmentation específicamente diseñada para datos k-anónimos puede recuperar parte del rendimiento perdido sin comprometer las garantías de privacidad.
 
-### **P12. ¿Realizaron validación cruzada temporal para evaluar la estabilidad del modelo en el tiempo? Los patrones de fraude evolucionan constantemente.**
+### **Validación cruzada temporal para evaluar la estabilidad del modelo en el tiempo? Los patrones de fraude evolucionan constantemente.**
 
 **Limitación crítica**: No realizamos validación cruzada temporal, usando solo validación cruzada estratificada estándar (5-fold). Esto es una debilidad significativa dado que los patrones de fraude evolucionan constantemente.
 
@@ -179,7 +175,7 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 
 **Impacto potencial**: Los resultados podrían ser optimistas. En producción real, el modelo podría degradarse más rápidamente debido a evolución de tactics fraudulentas. Recomendaríamos reevaluación trimestral del pipeline completo.
 
-### **P13. ¿Cómo evaluaron si su pipeline es resistente a adversarial attacks o intentos maliciosos de reidentificación?**
+### **Evaluación del pipeline se nota resistente a adversarial attacks o intentos maliciosos de reidentificación**
 
 **Evaluación limitada**: Solo evaluamos resistencia básica, no ataques adversariales sofisticados.
 
@@ -198,7 +194,7 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 - Red team exercises
 - Monitoring de queries sospechosas que podrían indicar ataques de reidentificación
 
-### **P14. ¿Probaron con diferentes distribuciones de fraude (más/menos del 0.13%)? ¿El framework es robusto ante cambios en la prevalencia?**
+### **Se ha probado con diferentes distribuciones de fraude (más/menos del 0.13%)? ¿El framework es robusto ante cambios en la prevalencia?**
 
 **Solo evaluamos la distribución original**: 0.13% de fraude en PaySim1. No testamos robustez ante diferentes prevalencias, lo cual es otra limitación metodológica.
 
@@ -214,7 +210,7 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 
 **Hipótesis sobre robustez**: Random Forest debería ser más robusto que XGBoost ante cambios de prevalencia, pero esto requiere validación empírica.
 
-### **P15. ¿Midieron los tiempos de procesamiento para cada técnica de anonimización? ¿Cuál es el overhead computacional real?**
+### **Medición de los tiempos de procesamiento para cada técnica de anonimización. Cuál es el overhead computacional real**
 
 **Medición parcial realizada**: Evaluamos tiempos en nuestro entorno de desarrollo, pero no un benchmarking exhaustivo.
 
@@ -222,18 +218,18 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 - **Seudonimización SHA-256**: ~45 segundos
 - **K-anonimato agrupación**: ~120 segundos
 - **L-diversidad verificación**: ~30 segundos
-- **Privacidad diferencial (Opacus)**: ~300% overhead en entrenamiento
+- **Privacidad diferencial**: ~300% overhead en entrenamiento
 
 **Overhead total estimado**: ~4-5x tiempo de procesamiento vs pipeline estándar.
 
 **Limitaciones de medición:**
-- Solo testado en hardware académico (no optimizado)
+- Solo testado en hardware optimizado (ordenador)
 - No evaluamos paralelización
 - No medimos memory footprint adicional
 
 **Recomendación**: Para implementación productiva, benchmark específico con hardware target es esencial.
 
-### **P16. Para un banco con 100M transacciones mensuales, ¿su pipeline podría procesar en batch nocturno o requeriría paralelización?**
+### **Para un banco con 100M transacciones mensuales, ¿su pipeline podría procesar en batch nocturno o requeriría paralelización?**
 
 **Extrapolación basada en nuestros tiempos:**
 
@@ -247,16 +243,16 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 **Estrategias de optimización necesarias:**
 - **Particionamiento temporal**: Procesar por lotes de 24h
 - **Paralelización horizontal**: 6-8 workers mínimo
-- **Implementación distribuida**: Spark/Dask para k-anonimato
+- **Implementación distribuida**: Spark para k-anonimato
 - **Optimización SHA-256**: Hardware acceleration o algoritmos más eficientes
 
 **Arquitectura recomendada**: Pipeline híbrido con procesamiento incremental + recompute periódico de grupos k-anónimos.
 
 ---
 
-## 📝 SECRETARIO DEL TRIBUNAL - Cumplimiento Legal y Normativo
+## 📝 Cumplimiento Legal y Normativo
 
-### **P17. El GDPR permite el procesamiento para "intereses legítimos" (Art. 6.1.f). ¿Su anonimización sería necesaria bajo esta base legal, o solo bajo "consentimiento"?**
+### **El GDPR permite el procesamiento para "intereses legítimos" (Art. 6.1.f). ¿Su anonimización sería necesaria bajo esta base legal, o solo bajo "consentimiento"?**
 
 **Análisis de base legal:**
 
@@ -275,7 +271,7 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 
 **Conclusión práctica**: Implementar anonimización como "seguro normativo", no solo como obligación legal específica.
 
-### **P18. ¿Cómo abordarían el "derecho a la portabilidad" (Art. 20) con datos anonimizados? ¿Es técnicamente posible?**
+### *Derecho a la portabilidad" (Art. 20) con datos anonimizados? ¿Es técnicamente posible?**
 
 **Contradicción fundamental identificada:**
 
@@ -305,7 +301,7 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 
 **Conclusión**: Portabilidad post-anonimización es **técnicamente imposible** por diseño, requiere gestión proactiva pre-anonimización.
 
-### **P19. La AEPD española ha emitido guías específicas sobre IA. ¿Su framework cumple con las directrices españolas además del GDPR general?**
+### **La AEPD española ha emitido guías específicas sobre IA. ¿Su framework cumple con las directrices españolas además del GDPR general?**
 
 **Cumplimiento verificado con guías AEPD (2023):**
 
@@ -327,7 +323,7 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 
 **Conclusión**: Framework alineado con directrices principales, requiere mejoras en aspectos de equidad y transparencia.
 
-### **P20. ¿Consideraron el impacto de la futura AI Act europea en su metodología? ¿Requeriría adaptaciones?**
+### **Consideración del impacto de la futura AI Act europea en su metodología? ¿Requeriría adaptaciones?**
 
 **Análisis preliminar AI Act (en vigor 2025):**
 
@@ -357,7 +353,7 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 
 **Estrategia recomendada**: Implementar gradualmente requisitos AI Act como preparación para producción.
 
-### **P21. La anonimización puede introducir sesgos (demographic parity, equalized odds). ¿Evaluaron el impacto en grupos demográficos específicos?**
+### **Sesgos (demographic parity, equalized odds) de la anonimización. ¿Evaluaron el impacto en grupos demográficos específicos?**
 
 **Limitación crítica reconocida**: No evaluamos impacto en equidad algorítmica, lo cual es una debilidad significativa del estudio.
 
@@ -382,7 +378,7 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 
 **Trabajo futuro esencial**: Implementar fairness metrics (Aequitas, Fairlearn) antes de deployment productivo.
 
-### **P22. ¿Su framework podría discriminar indirectamente contra poblaciones vulnerables al agrupar variables socioeconómicas?**
+### **El framework podría discriminar indirectamente contra poblaciones vulnerables al agrupar variables socioeconómicas**
 
 **Riesgo de discriminación indirecta identificado:**
 
@@ -409,7 +405,7 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 
 **Principio guía**: "Equidad por diseño" debe complementar "privacidad por diseño".
 
-### **P23. En un contexto de exclusión financiera, ¿cómo equilibrarían la privacidad con la necesidad de detectar fraudes que afectan a usuarios vulnerables?**
+### **En un contexto de exclusión financiera, cómo equilibrarían la privacidad con la necesidad de detectar fraudes que afectan a usuarios vulnerables**
 
 **Dilema ético identificado**: Tensión entre protección de privacidad y protección anti-fraude para poblaciones vulnerables.
 
@@ -440,7 +436,7 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 
 ## 🛠️ IMPLEMENTACIÓN PRÁCTICA
 
-### **P24. ¿Diseñaron un proceso de auditoría continua para verificar que el k-anonimato se mantiene conforme ingresan nuevos datos?**
+### **El proceso de auditoría diseñado continua para verificar que el k-anonimato y, se mantiene conforme ingresan nuevos datos**
 
 **Proceso de auditoría conceptual diseñado:**
 
@@ -461,7 +457,7 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 
 **Limitación actual**: Solo diseñado conceptualmente, no implementado en producción. Requiere integración con sistemas de ingesta de datos bancarios reales.
 
-### **P25. ¿Cómo manejarían la evolución del esquema de datos? Si PaySim añade nuevas variables, ¿el framework es adaptable?**
+### **Manejo de la evolución del esquema de datos. Si PaySim añade nuevas variables, ¿el framework es adaptable?**
 
 **Adaptabilidad del framework:**
 
@@ -489,7 +485,7 @@ La arquitectura modular permite reutilizar 70-80% del código base, adaptando pr
 
 **Estimación**: 2-4 semanas para adaptar el framework a cambios menores del esquema.
 
-### **P26. ¿Qué formación específica requeriría el personal técnico de un banco para implementar su framework?**
+### **Formación específica requeriría por el personal técnico de un banco para implementar su framework**
 
 **Programa de formación estructurado:**
 
@@ -555,7 +551,7 @@ FL + nuestras técnicas = **"Federated Privacy-Preserving Learning"**:
 
 **Conclusión**: FL sería complementario, no sustituto. Para implementación inicial, nuestro enfoque es más pragmático.
 
-### **P28. ¿Evaluaron el uso de Synthetic Data Generation como alternativa completa a la anonimización?**
+### **Evaluación  del uso de Synthetic Data Generation como alternativa completa a la anonimización**
 
 **No evaluamos synthetic data generation**, lo cual reconocemos como una alternativa prometedora que debería haberse considerado.
 
@@ -584,7 +580,7 @@ FL + nuestras técnicas = **"Federated Privacy-Preserving Learning"**:
 
 **Conclusión**: Synthetic data es complementario, no sustituto. Para primera implementación, anonimización es más predecible y auditable.
 
-### **P29. En el contexto de LLMs financieros, ¿cómo aplicarían su framework a modelos generativos (GPT) vs predictivos (Random Forest)?**
+### **En el contexto de LLMs financieros, ¿cómo aplicarían su framework a modelos generativos (GPT) vs predictivos (Random Forest)**
 
 **Diferencias fundamentales identificadas:**
 
@@ -620,7 +616,7 @@ Datos originales → Text anonymization → Fine-tuning con DP → Output filter
 
 **Conclusión**: Framework reutilizable ~60%, requiere adaptaciones significativas para generativos.
 
-### **P30. ¿Su dashboard de cumplimiento GDPR sería auditable por supervisores financieros (Banco de España, BCE)?**
+### **Auditoría del dashboard de cumplimiento GDPR por supervisores financieros (Banco de España, BCE)**
 
 **Diseño orientado a auditoría:**
 
@@ -654,7 +650,7 @@ Datos originales → Text anonymization → Fine-tuning con DP → Output filter
 
 **Conclusión**: Base sólida para auditoría, requiere 20-30% trabajo adicional para compliance total con supervisores.
 
-### **P31. ¿Cómo documentarían técnicamente el cumplimiento para una DPIA (Data Protection Impact Assessment)?**
+### **Documentación técnica el cumplimiento para una DPIA (Data Protection Impact Assessment)**
 
 **Estructura DPIA propuesta:**
 
@@ -693,7 +689,7 @@ Datos originales → Text anonymization → Fine-tuning con DP → Output filter
 
 **Conclusión DPIA**: Tratamiento necesario, proporcional y con riesgos residuales bajos gestionados mediante medidas técnicas robustas.
 
-### **P32. ¿El framework genera logs auditables que permitan demostrar compliance en una inspección?**
+### **Generación de Logs auditables del framework permitan demostrar compliance en una inspección**
 
 **Sistema de logging implementado:**
 
@@ -742,7 +738,7 @@ TIMESTAMP | OPERATION | INPUT_RECORDS | OUTPUT_RECORDS | PARAMETERS | STATUS
 
 ## 📈 ESTRATEGIA Y FUTURO
 
-### **P33. ¿Cómo evolucionaría su framework ante nuevas regulaciones (AI Act, Digital Services Act)?**
+### **Evolución del framework ante nuevas regulaciones (AI Act, Digital Services Act)**
 
 **Evolución estratégica del framework:**
 
@@ -771,7 +767,7 @@ Framework actual → Módulo AI Act → Módulo DSA → Framework 2.0
 - **Q2 2026**: DSA compliance si aplicable
 - **Q4 2026**: Framework 2.0 completo
 
-### **P34. ¿Su metodología sería aplicable en otras jurisdicciones (CCPA California, LGPD Brasil)?**
+### **La metodología sería aplicable en otras jurisdicciones (CCPA California, LGPD Brasil)**
 
 **Análisis de portabilidad regulatoria:**
 
@@ -816,7 +812,7 @@ Jurisdiction Modules (Pluggable)
 
 **Conclusión**: Framework 90%+ portable, requiere principalmente adaptación de interfaces regulatorias, no técnicas core.
 
-### **P35. ¿Qué líneas de investigación futuras consideran más prometedoras basándose en sus hallazgos?**
+### **Líneas de investigación futuras consideran más prometedoras basándose en sus hallazgos**
 
 **Líneas de investigación prioritarias identificadas:**
 
@@ -866,7 +862,7 @@ Jurisdiction Modules (Pluggable)
 
 ## 🎯 PREGUNTAS DE DEFENSA CRÍTICA
 
-### **P36. ¿Cuál consideran la limitación más significativa de su trabajo? ¿Cómo la abordarían en futuras investigaciones?**
+### **Limitación más significativa de su trabajo. ¿Cómo la abordarían en futuras investigaciones?**
 
 **Limitación más significativa identificada**: **Ausencia de validación con datos bancarios reales**.
 
@@ -904,7 +900,7 @@ Jurisdiction Modules (Pluggable)
 
 **Beneficio esperado**: Validación empírica transformaría framework de "proof-of-concept académico" a "solución industrialmente validada".
 
-### **P37. ¿Hay algún resultado que les sorprendió negativamente? ¿La mejora paradójica de Regresión Logística era esperada?**
+### **Resultado que les sorprendió negativamente. ¿La mejora paradójica de Regresión Logística era esperada?**
 
 **Resultado más sorprendente**: **Mejora paradójica de Regresión Logística (+2.40% F1-Score)**.
 
@@ -955,7 +951,7 @@ Jurisdiction Modules (Pluggable)
 - **Algorithm taxonomy**: Clasificar algoritmos por robustez ante anonimización
 - **Optimal anonymization per algorithm**: Técnicas específicas por modelo
 
-### **P38. ¿Qué habrían hecho diferente si tuvieran acceso a datos reales de un banco?**
+### **Qué habrían hecho diferente si tuvieran acceso a datos reales de un banco**
 
 **Cambios fundamentales en diseño experimental:**
 
@@ -1042,7 +1038,7 @@ Jurisdiction Modules (Pluggable)
 
 ## 💼 APLICABILIDAD INDUSTRIAL Y COMPETENCIA
 
-### **P39-44. Resumen de Aplicabilidad Industrial**
+### **Resumen de Aplicabilidad Industrial**
 
 **Contact with financial institutions**: No establecimos partnerships formales durante el TFM, limitando validación real-world.
 
@@ -1060,13 +1056,13 @@ Jurisdiction Modules (Pluggable)
 
 ## 📊 MÉTRICAS Y VALIDACIÓN
 
-### **P45-50. Robustez del Framework**
+### **Robustez del Framework**
 
 **Data drift resilience**: Framework requeriría re-calibración ante cambios significativos en patrones de fraude.
 
-**K-anonimato stability**: Grupos podrían requerir rebalancing trimestral.
+**Estabilidad del K-anonimato**: Grupos podrían requerir rebalancing trimestral.
 
-**Multiple dataset attacks**: Riesgo existe, requiere coordination entre releases.
+**Ataques múltiple dataset**: Riesgo existe, requiere coordination entre releases.
 
 **Advanced privacy metrics**: Evaluamos solo k-anonimato/l-diversidad básicos, no métricas como differential privacy composition o mutual information leakage.
 

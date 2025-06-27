@@ -1,0 +1,4 @@
+Modelo,F1_Original,F1_Anonimizado,Degradacion_Porcentual,Sensibilidad_Original,Sensibilidad_Anonimizada,Precision_Original,Precision_Anonimizada,Score_Robustez,Ranking,Recomendacion
+Random Forest,86.76,84.74,-2.02,77.92,76.06,99.97,99.96,92.684,1,Óptimo para producción
+XGBoost,86.33,66.43,-19.9,80.6,59.66,99.97,99.92,74.632,2,Requiere optimización
+Regresión Logística,52.46,54.86,2.4,39.45,41.68,99.91,99.91,81.944,3,Solo para auditoría

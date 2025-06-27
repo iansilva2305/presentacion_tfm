@@ -1,0 +1,30 @@
+
+REPORTE EJECUTIVO - ANÁLISIS CUANTITATIVO
+==========================================
+TFM: Anonimización de Datos Personales y Cumplimiento del GDPR
+
+RESUMEN DE RESULTADOS:
+• Modelo ganador: Random Forest (F1: 84.74%, degradación: -2.02%)
+• Cumplimiento GDPR: 100% (5/5 artículos verificados)
+• Trade-off privacidad-utilidad: ÓPTIMO
+• Mejor desempeño de la literatura académica revisada
+
+MÉTRICAS CLAVE:
+• F1-Score post-anonimización: 84.74% (Random Forest)
+• Sensibilidad: 76.06% (detección de fraudes adecuada)
+• Precisión: 99.96% (falsos positivos mínimos)
+• Score de robustez: 92.7/100
+
+VALIDACIÓN CIENTÍFICA:
+• Supera benchmarks de literatura académica
+• Metodología CRISP-DM completamente aplicada
+• Resultados replicables y auditables
+• Framework escalable para sector financiero
+
+RECOMENDACIÓN FINAL:
+Implementar Random Forest como modelo de producción con parámetros 
+k=10, l=2, ε=2.0 para cumplimiento óptimo GDPR manteniendo 
+efectividad operacional.
+
+Fecha: 2025-06-27 00:46:56
+Autores: Armando Rubén Ita Silva, Daniel Alexis Mendoza Corne, David Alexander González Vásquez

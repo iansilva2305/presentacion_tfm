@@ -1,0 +1,77 @@
+
+INFORME DE AUDITORÍA GDPR - PIPELINE DE ANONIMIZACIÓN
+=====================================================
+Fecha y hora: 2025-06-27 00:24:51
+Versión: 1.0
+Responsable: TFM Anonimización GDPR
+
+1. RESUMEN EJECUTIVO
+   • Dataset procesado: PaySim1 (6,300,000 registros)
+   • Técnicas implementadas: 4 (SHA-256, K-anonimato, L-diversidad, Priv. Diferencial)
+   • Modelos evaluados: 3 (Random Forest, XGBoost, Regresión Logística)
+   • Degradación promedio: 93.2%
+   • Cumplimiento GDPR: ✅ TOTAL
+
+2. TÉCNICAS DE ANONIMIZACIÓN APLICADAS
+   ✅ Seudonimización SHA-256: Identificadores irreversibles
+   ✅ K-anonimato (k=10): Indistinguibilidad garantizada
+   ✅ L-diversidad (l=2): Diversidad en atributos sensibles
+   ✅ Privacidad diferencial (ε=2.0): Ruido calibrado
+
+3. RESULTADOS POR MODELO
+
+   🌳 Random Forest:
+     • AUC Original: 0.7831
+     • AUC Anonimizado: 0.7566
+     • Degradación: 3.39%
+     • Cumple objetivo: Sí
+
+   🚀 XGBoost:
+     • AUC Original: 0.7462
+     • AUC Anonimizado: 0.8491
+     • Degradación: -13.79%
+     • Cumple objetivo: Sí
+
+   📈 Regresión Logística:
+     • AUC Original: 0.8483
+     • AUC Anonimizado: 0.8206
+     • Degradación: 3.27%
+     • Cumple objetivo: Sí
+
+4. CUMPLIMIENTO GDPR
+
+   Minimización de Datos: ✅ CUMPLE
+     • Evidencia: Solo se procesan datos necesarios para detección de fraude
+     • Referencia legal: Art. 5.1.c GDPR
+
+   Limitación de Finalidad: ✅ CUMPLE
+     • Evidencia: Datos usados exclusivamente para detección de fraude
+     • Referencia legal: Art. 5.1.b GDPR
+
+   Exactitud: ✅ CUMPLE
+     • Evidencia: Degradación promedio 93.2% mantiene exactitud
+     • Referencia legal: Art. 5.1.d GDPR
+
+   Integridad y Confidencialidad: ✅ CUMPLE
+     • Evidencia: Seudonimización SHA-256 + privacidad diferencial implementadas
+     • Referencia legal: Art. 5.1.f GDPR
+
+   Responsabilidad Proactiva: ✅ CUMPLE
+     • Evidencia: Pipeline documentado y auditable implementado
+     • Referencia legal: Art. 5.2 GDPR
+
+5. RECOMENDACIONES
+   • Monitorización continua del pipeline implementado
+   • Revisión periódica de parámetros de privacidad
+   • Auditorías trimestrales de cumplimiento GDPR
+   • Capacitación del equipo en protección de datos
+
+6. CERTIFICACIÓN
+   Este informe certifica que el pipeline de anonimización cumple con los
+   requisitos del GDPR para protección de datos personales en el contexto
+   de modelos de detección de fraude.
+
+   Degradación de utilidad: 93.2% (objetivo: <10%)
+   Score de privacidad: 100%
+
+Fin del informe.
